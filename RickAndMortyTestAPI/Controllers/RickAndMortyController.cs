@@ -19,13 +19,13 @@ namespace RickAndMortyTestAPI.Controllers
             this.repository = repository;
         }
 
-
         [HttpGet("person")]
         public async Task<IActionResult> GetPerson([FromQuery] string name)
         {
-            if (true)
+            JsonData data = await repository.GetPerson(name);
+            if (data.People?.Any() == true)
             {
-                return Ok();
+                return Ok(data);
             }
             return BadRequest();
         }
