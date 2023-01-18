@@ -17,23 +17,43 @@ namespace RickAndMortyTestAPI.Data
             Client.DefaultRequestHeaders.Accept.Clear();
             Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
-        public async Task<bool> CheckPerson(string name, string episodeName)
+        public async Task<bool?> CheckPerson(string personName, string episodeName)
         {
-            throw new NotImplementedException();
+            using HttpResponseMessage response = await Client.GetAsync("https://rickandmortyapi.com/api/episode/?name=" + episodeName);
+            if (response.IsSuccessStatusCode)
+            {
+                JsonEpisode result = await response.Content.ReadAsAsync<JsonEpisode>();
+                foreach (var episode in result.Episodes)
+                {
+                    foreach (var character in episode.Characters)
+                    {
+                        using (HttpResponseMessage responseCharacter = await Client.GetAsync(character))
+                        {
+                            if (responseCharacter.IsSuccessStatusCode)
+                            {
+                                Person person = await responseCharacter.Content.ReadAsAsync<Person>();
+                                if (person.Name.Contains(personName))
+                                    return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            return null;
         }
 
-        public async Task<JsonData> GetPerson(string name)
+        public async Task<JsonPerson> GetPerson(string name)
         {
-            using (HttpResponseMessage response = await Client.GetAsync("https://rickandmortyapi.com/api/character/?name=" + name))
+            JsonPerson person = new JsonPerson();
+            using HttpResponseMessage response = await Client.GetAsync("https://rickandmortyapi.com/api/character/?name=" + name);
+
+            if (response.IsSuccessStatusCode)
             {
-                JsonData person = new JsonData();
-                if (response.IsSuccessStatusCode)
-                {
-                    person = await response.Content.ReadAsAsync<JsonData>();
-                }
-                return person;
+                person = await response.Content.ReadAsAsync<JsonPerson>();
             }
-            throw new NotImplementedException("Http response instance not created");
+            return person;
         }
+
     }
 }

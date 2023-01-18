@@ -8,7 +8,7 @@ namespace RickAndMortyTestAPI.Data
 {
     public interface IRickAndMortyRepository
     {
-        public Task<bool> CheckPerson(string name, string episodeName);
-        public Task<JsonData> GetPerson(string name);
+        public Task<bool?> CheckPerson(string personName, string episodeName);
+        public Task<JsonPerson> GetPerson(string name);
     }
 }

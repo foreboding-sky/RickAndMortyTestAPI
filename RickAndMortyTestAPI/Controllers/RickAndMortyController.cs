@@ -22,22 +22,23 @@ namespace RickAndMortyTestAPI.Controllers
         [HttpGet("person")]
         public async Task<IActionResult> GetPerson([FromQuery] string name)
         {
-            JsonData data = await repository.GetPerson(name);
+            JsonPerson data = await repository.GetPerson(name);
             if (data.People?.Any() == true)
             {
                 return Ok(data);
             }
-            return BadRequest();
+            return NotFound();
         }
 
         [HttpPost("check-person")]
         public async Task<IActionResult> CheckPerson([FromQuery] string personName, [FromQuery] string episodeName)
         {
-            if (true)
+            var inEpisode = await repository.CheckPerson(personName, episodeName);
+            if (inEpisode != null)
             {
-                return Ok();
+                return Ok(inEpisode);
             }
-            return BadRequest();
+            return NotFound();
         }
     }
 }
