@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RickAndMortyTestAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1")]
     [ApiController]
     public class RickAndMortyController : ControllerBase
     {
